@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Achievo</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            /* gray-700 */
+            border-radius: 0.75rem;
+            /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="text-gray-300">
+
+    <div class="flex h-screen bg-[#121212]">
+        <div class="hidden md:flex flex-col w-64 card m-2 !rounded-xl">
+            <div class="flex items-center justify-center h-16 border-b border-gray-700">
+                <i class="fas fa-trophy text-blue-500 text-2xl"></i>
+                <span class="text-white text-xl font-bold ml-2">Achievo</span>
+            </div>
+            <div class="flex flex-col flex-grow p-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg">
+                    <i class="fas fa-tachometer-alt fa-fw mr-3"></i> Dashboard
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-users fa-fw mr-3"></i> Users
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-medal fa-fw mr-3"></i> Achievements
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-cog fa-fw mr-3"></i> Settings
+                </a>
+                <a href="/logout"
+                    class="flex items-center px-4 py-2 mt-auto text-sm font-semibold text-gray-300 hover:bg-red-800 hover:text-white rounded-lg">
+                    <i class="fas fa-sign-out-alt fa-fw mr-3"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <div class="flex flex-col flex-grow">
+            <header class="flex items-center justify-between h-16 px-6 shrink-0">
+                <h1 class="text-xl font-semibold text-white">Admin Dashboard</h1>
+                <div class="flex items-center">
+                    <span class="mr-3 hidden sm:inline">Welcome, Admin!</span>
+                    <div
+                        class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center ring-2 ring-blue-500">
+                        <i class="fas fa-user-shield text-white"></i>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-grow p-6 overflow-auto space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card p-5 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">Total Users</p>
+                            <p class="text-3xl font-bold text-white">1,250</p>
+                        </div>
+                        <div class="bg-blue-500/10 p-3 rounded-full"><i class="fas fa-users text-blue-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="card p-5 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">Total Achievements</p>
+                            <p class="text-3xl font-bold text-white">8,430</p>
+                        </div>
+                        <div class="bg-green-500/10 p-3 rounded-full"><i
+                                class="fas fa-trophy text-green-400 text-2xl"></i></div>
+                    </div>
+                    <div class="card p-5 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">Pending Validations</p>
+                            <p class="text-3xl font-bold text-white">72</p>
+                        </div>
+                        <div class="bg-yellow-500/10 p-3 rounded-full"><i
+                                class="fas fa-clock text-yellow-400 text-2xl"></i></div>
+                    </div>
+                    <div class="card p-5 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">System Alerts</p>
+                            <p class="text-3xl font-bold text-white">3</p>
+                        </div>
+                        <div class="bg-red-500/10 p-3 rounded-full"><i
+                                class="fas fa-exclamation-triangle text-red-400 text-2xl"></i></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white">User Management</h2>
+                                <div class="mt-4 flex flex-col sm:flex-row gap-4">
+                                    <input type="text" placeholder="Search users..."
+                                        class="flex-grow bg-gray-800 border border-gray-600 rounded-lg p-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <select
+                                        class="bg-gray-800 border border-gray-600 rounded-lg p-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                        <option>Filter by Role</option>
+                                        <option>Student</option>
+                                        <option>Faculty</option>
+                                        <option>Admin</option>
+                                    </select>
+                                    <button
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                        <i class="fas fa-user-plus mr-2"></i> Add User
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-400">...</table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white">Achievement Oversight</h2>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-400">
+                                    <thead class="text-xs text-gray-400 uppercase bg-gray-900/50">
+                                        <tr>
+                                            <th class="px-6 py-3">Achievement</th>
+                                            <th class="px-6 py-3">Student</th>
+                                            <th class="px-6 py-3">Status</th>
+                                            <th class="px-6 py-3">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-700 hover:bg-gray-800">
+                                            <td class="px-6 py-4 font-medium text-white">Hackathon Winner</td>
+                                            <td class="px-6 py-4">Pratham Lokhande</td>
+                                            <td class="px-6 py-4"><span
+                                                    class="bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded-full">Verified</span>
+                                            </td>
+                                            <td class="px-6 py-4"><a href="#"
+                                                    class="text-blue-400 hover:underline">View</a></td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700 hover:bg-gray-800">
+                                            <td class="px-6 py-4 font-medium text-white">Internship at Google</td>
+                                            <td class="px-6 py-4">Soham Yeola</td>
+                                            <td class="px-6 py-4"><span
+                                                    class="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-full">Pending</span>
+                                            </td>
+                                            <td class="px-6 py-4"><a href="#"
+                                                    class="text-blue-400 hover:underline">Validate</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white">Platform Analytics</h2>
+                                <p class="text-sm text-gray-400">Achievements submitted this month</p>
+                            </div>
+                            <div class="p-4">
+                                <canvas id="achievementsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white">System Settings</h2>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div>
+                                    <label class="text-sm font-medium">Point Allocation: Hackathon</label>
+                                    <input type="number" value="50"
+                                        class="w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg p-2 text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium">Add New Category</label>
+                                    <input type="text" placeholder="e.g., Entrepreneurship"
+                                        class="w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg p-2 text-sm">
+                                </div>
+                                <button
+                                    class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                                    Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js script for Platform Analytics
+        const ctx = document.getElementById('achievementsChart').getContext('2d');
+        const achievementsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Achievements',
+                    data: [65, 59, 80, 81],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#9CA3AF' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#9CA3AF' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

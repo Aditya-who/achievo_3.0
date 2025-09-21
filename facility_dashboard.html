@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - Achievo</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            border-radius: 0.75rem;
+        }
+
+        /* Hide modals by default */
+        .modal {
+            display: none;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="text-gray-300">
+
+    <div class="flex h-screen bg-[#121212]">
+        <div class="hidden md:flex flex-col w-64 card m-2 !rounded-xl">
+            <div class="flex items-center justify-center h-16 border-b border-gray-700">
+                <i class="fas fa-trophy text-blue-500 text-2xl"></i>
+                <span class="text-white text-xl font-bold ml-2">Achievo</span>
+            </div>
+            <div class="flex flex-col flex-grow p-4 space-y-2">
+                <a href="#" class="flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg">
+                    <i class="fas fa-tachometer-alt fa-fw mr-3"></i> Dashboard
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-check-double fa-fw mr-3"></i> Verifications
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-bell fa-fw mr-3"></i> Notifications
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-700 rounded-lg">
+                    <i class="fas fa-chart-bar fa-fw mr-3"></i> Leaderboard
+                </a>
+                <a href="/logout"
+                    class="flex items-center px-4 py-2 mt-auto text-sm font-semibold text-gray-300 hover:bg-red-800 hover:text-white rounded-lg">
+                    <i class="fas fa-sign-out-alt fa-fw mr-3"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <div class="flex flex-col flex-grow">
+            <header class="flex items-center justify-between h-16 px-6 shrink-0 border-b border-gray-800">
+                <h1 class="text-xl font-semibold text-white">Faculty Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-400 hover:text-white">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute top-0 right-0 flex h-3 w-3">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                    </button>
+                    <div class="flex items-center">
+                        <span class="mr-3 hidden sm:inline">Dr. Sharma</span>
+                        <div
+                            class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center ring-2 ring-blue-500">
+                            <i class="fas fa-user-tie text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-grow p-6 overflow-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="card p-5">
+                                <p class="text-sm text-gray-400">Pending Verifications</p>
+                                <p class="text-3xl font-bold text-blue-400">12</p>
+                            </div>
+                            <div class="card p-5">
+                                <p class="text-sm text-gray-400">Verified This Month</p>
+                                <p class="text-3xl font-bold text-white">84</p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white">Achievement Verification Queue</h2>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-gray-400">
+                                    <thead class="text-xs text-gray-400 uppercase bg-gray-900/50">
+                                        <tr>
+                                            <th class="px-6 py-3">Student</th>
+                                            <th class="px-6 py-3">Achievement</th>
+                                            <th class="px-6 py-3">Submitted</th>
+                                            <th class="px-6 py-3 text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-6 py-4 font-medium text-white">Pratham Lokhande</td>
+                                            <td class="px-6 py-4">First Place - CodeFest 2025</td>
+                                            <td class="px-6 py-4">2025-09-18</td>
+                                            <td class="px-6 py-4 flex items-center justify-center space-x-2">
+                                                <button
+                                                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-lg text-xs">Approve</button>
+                                                <button
+                                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg text-xs">Reject</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-6 py-4 font-medium text-white">Shravani Tanksale</td>
+                                            <td class="px-6 py-4">Research Paper in IEEE</td>
+                                            <td class="px-6 py-4">2025-09-17</td>
+                                            <td class="px-6 py-4 flex items-center justify-center space-x-2">
+                                                <button
+                                                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-lg text-xs">Approve</button>
+                                                <button
+                                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg text-xs">Reject</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white flex items-center">
+                                    <i class="fas fa-stream mr-2 text-blue-400"></i> Live Activity Feed
+                                </h2>
+                            </div>
+                            <div class="p-4 space-y-4 max-h-96 overflow-y-auto">
+                                <div class="flex items-start space-x-3 p-3 bg-gray-800/50 rounded-lg">
+                                    <div class="w-10 h-10 bg-gray-700 rounded-full flex-shrink-0"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm"><span class="font-semibold text-white">Sujal Singh</span>
+                                            submitted a new achievement.</p>
+                                        <p class="text-xs text-blue-400 font-medium">"Volunteer at NSS Camp"</p>
+                                        <p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
+                                        <div class="mt-2 space-x-2">
+                                            <button
+                                                class="bg-green-600/50 hover:bg-green-600 text-green-300 font-bold py-1 px-2 rounded text-xs">Quick
+                                                Approve</button>
+                                            <button
+                                                class="bg-red-600/50 hover:bg-red-600 text-red-300 font-bold py-1 px-2 rounded text-xs">Quick
+                                                Reject</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 p-3 rounded-lg">
+                                    <div class="w-10 h-10 bg-gray-700 rounded-full flex-shrink-0"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm"><span class="font-semibold text-white">Aditya Yelmar</span>
+                                            submitted a new achievement.</p>
+                                        <p class="text-xs text-blue-400 font-medium">"Published Article on Medium"</p>
+                                        <p class="text-xs text-gray-500 mt-1">15 minutes ago</p>
+                                        <div class="mt-2 space-x-2">
+                                            <button
+                                                class="bg-green-600/50 hover:bg-green-600 text-green-300 font-bold py-1 px-2 rounded text-xs">Quick
+                                                Approve</button>
+                                            <button
+                                                class="bg-red-600/50 hover:bg-red-600 text-red-300 font-bold py-1 px-2 rounded text-xs">Quick
+                                                Reject</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="p-4 border-b border-gray-700">
+                                <h2 class="text-lg font-semibold text-white">Student Leaderboard</h2>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="flex items-center"><i class="fas fa-medal text-yellow-400 text-xl"></i><span
+                                        class="ml-4 font-medium text-white">Aditya Yelmar</span><span
+                                        class="ml-auto text-gray-400">1,245 pts</span></div>
+                                <div class="flex items-center"><i class="fas fa-medal text-gray-400 text-xl"></i><span
+                                        class="ml-4 font-medium text-white">Soham Yeola</span><span
+                                        class="ml-auto text-gray-400">1,156 pts</span></div>
+                                <div class="flex items-center"><i class="fas fa-medal text-orange-400 text-xl"></i><span
+                                        class="ml-4 font-medium text-white">Sid Waghmare</span><span
+                                        class="ml-auto text-gray-400">1,089 pts</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>

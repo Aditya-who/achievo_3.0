@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achievo - Student Achievement Management Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            borderRadius: {
+              lg: "var(--radius)",
+              md: "calc(var(--radius) - 2px)",
+              sm: "calc(var(--radius) - 4px)",
+            },
+            colors: {
+              background: "var(--background)",
+              foreground: "var(--foreground)",
+              card: {
+                DEFAULT: "var(--card)",
+                foreground: "var(--card-foreground)",
+              },
+              popover: {
+                DEFAULT: "var(--popover)",
+                foreground: "var(--popover-foreground)",
+              },
+              primary: {
+                DEFAULT: "var(--primary)",
+                foreground: "var(--primary-foreground)",
+              },
+              secondary: {
+                DEFAULT: "var(--secondary)",
+                foreground: "var(--secondary-foreground)",
+              },
+              muted: {
+                DEFAULT: "var(--muted)",
+                foreground: "var(--muted-foreground)",
+              },
+              accent: {
+                DEFAULT: "var(--accent)",
+                foreground: "var(--accent-foreground)",
+              },
+              destructive: {
+                DEFAULT: "var(--destructive)",
+                foreground: "var(--destructive-foreground)",
+              },
+              border: "var(--border)",
+              input: "var(--input)",
+              ring: "var(--ring)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --background: hsl(220 13% 11%);
+        --foreground: hsl(210 40% 98%);
+        --card: hsl(0 0% 0%);
+        --card-foreground: hsl(210 40% 98%);
+        --popover: hsl(0 0% 0%);
+        --popover-foreground: hsl(210 40% 98%);
+        --primary: hsl(221.2 83.2% 53.3%);
+        --primary-foreground: hsl(210 40% 98%);
+        --secondary: hsl(160 84% 39%);
+        --secondary-foreground: hsl(210 40% 98%);
+        --muted: hsl(217 32.6% 17.5%);
+        --muted-foreground: hsl(215 20.2% 65.1%);
+        --accent: hsl(262.1 83.3% 57.8%);
+        --accent-foreground: hsl(210 40% 98%);
+        --destructive: hsl(0 62.8% 30.6%);
+        --destructive-foreground: hsl(210 40% 98%);
+        --border: hsl(217 32.6% 27.5%);
+        --input: hsl(217 32.6% 27.5%);
+        --ring: hsl(221.2 83.2% 53.3%);
+        --radius: 0.75rem;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Roboto", sans-serif;
+        background: var(--background);
+        color: var(--foreground);
+        min-height: 100vh;
+      }
+
+      .badge-animation {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+
+      .progress-bar {
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        box-shadow: 0 2px 8px 0 rgba(33, 150, 243, 0.15);
+      }
+
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        box-shadow: 0 2px 8px 0 rgba(33, 150, 243, 0.08);
+        transition: box-shadow 0.2s;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Navbar improvements */
+      nav {
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
+        background: linear-gradient(90deg, #0f172a 60%, #1e293b 100%);
+      }
+      nav .text-xl {
+        letter-spacing: 0.02em;
+      }
+      nav a {
+        transition: color 0.2s;
+        font-weight: 500;
+        position: relative;
+      }
+      nav a:hover,
+      nav a.active {
+        color: var(--primary);
+      }
+      nav a.active::after,
+      nav a:hover::after {
+        content: "";
+        display: block;
+        height: 2px;
+        width: 100%;
+        background: var(--primary);
+        border-radius: 2px;
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+      }
+
+      /* Profile dropdown improvements */
+      #profile-menu-toggle {
+        cursor: pointer;
+        position: relative;
+        transition: background 0.2s;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.5rem;
+      }
+      #profile-menu-toggle:hover {
+        background: var(--muted);
+      }
+      #profile-dropdown {
+        min-width: 200px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.18);
+        animation: dropdownIn 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+      }
+      @keyframes dropdownIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      #profile-dropdown ul {
+        padding: 0.5rem 0;
+      }
+      #profile-dropdown li {
+        list-style: none;
+      }
+      #profile-dropdown a,
+      #profile-dropdown button {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        color: var(--foreground);
+        background: none;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.18s, color 0.18s;
+      }
+      #profile-dropdown a:hover,
+      #profile-dropdown button:hover {
+        background: var(--muted);
+        color: var(--primary);
+      }
+      #profile-dropdown button {
+        color: var(--destructive);
+        font-weight: 500;
+      }
+      #profile-dropdown button:hover {
+        background: var(--destructive);
+        color: var(--destructive-foreground);
+      }
+
+      /* Card improvements */
+      .bg-card {
+        background: linear-gradient(135deg, #18181b 80%, #1e293b 100%);
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+      }
+
+      /* Button improvements */
+      button,
+      .btn {
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        outline: none;
+      }
+      button:focus,
+      .btn:focus {
+        box-shadow: 0 0 0 2px var(--primary);
+      }
+
+      /* Modal improvements */
+      #achievement-modal .bg-card {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.22);
+        border-radius: 1rem;
+        border: 1px solid var(--border);
+      }
+
+      /* Table improvements */
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+      }
+      th,
+      td {
+        padding: 0.75rem 0.5rem;
+        text-align: left;
+      }
+      th {
+        background: var(--muted);
+        color: var(--muted-foreground);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      tr {
+        transition: background 0.18s;
+      }
+      tr:hover {
+        background: var(--muted);
+      }
+
+      /* Misc improvements */
+      .rounded-lg {
+        border-radius: 0.75rem !important;
+      }
+      .rounded-full {
+        border-radius: 9999px !important;
+      }
+      .shadow-lg {
+        box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18) !important;
+      }
+      .shadow-xl {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.22) !important;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-background text-foreground">
+    <nav class="bg-black border-b border-gray-700 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <!-- New Professional Logo -->
+              <a href="#dashboard" class="flex items-center space-x-2">
+                <svg
+                  class="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs>
+                    <linearGradient
+                      id="logoGradient"
+                      x1="0"
+                      y1="0"
+                      x2="1"
+                      y2="1"
+                    >
+                      <stop offset="0%" stop-color="var(--primary)" />
+                      <stop offset="100%" stop-color="var(--accent)" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M12 2L2 22H22L12 2Z"
+                    stroke="url(#logoGradient)"
+                    stroke-width="1.5"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M12 11L17 22"
+                    stroke="url(#logoGradient)"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M12 11L7 22"
+                    stroke="url(#logoGradient)"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M8.5 16H15.5"
+                    stroke="var(--foreground)"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <span class="text-xl font-bold text-white">Achievo</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="hidden md:flex space-x-6">
+            <a href="#dashboard" class="text-white font-medium">Dashboard</a>
+            <a href="#achievements" class="text-gray-300 hover:text-white"
+              >Achievements</a
+            >
+            <a href="#leaderboard" class="text-gray-300 hover:text-white"
+              >Leaderboard</a
+            >
+            <a href="portfolio.html" class="text-gray-300 hover:text-white"
+              >Portfolio</a
+            >
+          </div>
+
+          <div class="flex items-center space-x-3 relative">
+            <button class="p-2 text-gray-300 hover:text-white">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div
+              class="flex items-center space-x-2 cursor-pointer"
+              id="profile-menu-toggle"
+            >
+              <div class="w-8 h-8 bg-muted rounded-full">
+                <img
+                  src="img/Pratham Lokhande.jpeg"
+                  alt="Pratham Lokhande"
+                  class="profile-image"
+                />
+              </div>
+              <span class="text-sm font-medium hidden sm:block text-white"
+                >Pratham Lokhande</span
+              >
+              <i class="fas fa-chevron-down text-xs text-gray-300"></i>
+            </div>
+            <!-- Profile Dropdown Menu -->
+            <div
+              id="profile-dropdown"
+              class="absolute right-0 top-12 mt-2 w-52 bg-card border border-border rounded-lg shadow-lg z-50 hidden"
+            >
+              <ul class="py-2">
+                <li>
+                  <a href="#dashboard" class="block">Dashboard</a>
+                </li>
+                <li>
+                  <a href="#achievements" class="block">Achievements</a>
+                </li>
+                <li>
+                  <a href="#leaderboard" class="block">Leaderboard</a>
+                </li>
+                <li>
+                  <a href="portfolio.html" class="block">Portfolio</a>
+                </li>
+                <li>
+                  <a href="#settings" class="block">Settings</a>
+                </li>
+                <li>
+                  <button id="logout-btn" class="block">Logout</button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Dashboard Section Anchor -->
+      <div class="mb-8" id="dashboard">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-3xl font-bold text-foreground">
+              Welcome back, Pratham!
+            </h1>
+            <p class="text-muted-foreground mt-1">
+              Track your achievements and climb the leaderboard
+            </p>
+          </div>
+          <button
+            class="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          >
+            <i class="fas fa-plus mr-2"></i>Add Achievement
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-card rounded-lg border border-border p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-muted-foreground text-sm">Total Points</p>
+                <p
+                  class="text-2xl font-bold text-foreground"
+                  data-bind="user.totalPoints"
+                >
+                  847
+                </p>
+              </div>
+              <div
+                class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-star text-primary text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-secondary text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>+12% this month</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-card rounded-lg border border-border p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-muted-foreground text-sm">Achievements</p>
+                <p
+                  class="text-2xl font-bold text-foreground"
+                  data-bind="user.achievementCount"
+                >
+                  23
+                </p>
+              </div>
+              <div
+                class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-medal text-secondary text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-secondary text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>3 this week</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-lg border border-border p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-muted-foreground text-sm">Rank</p>
+                <p
+                  class="text-2xl font-bold text-foreground"
+                  data-bind="user.rank"
+                >
+                  #5
+                </p>
+              </div>
+              <div
+                class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-ranking-star text-accent text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-secondary text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>Up 2 positions</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-lg border border-border p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-muted-foreground text-sm">Pending</p>
+                <p
+                  class="text-2xl font-bold text-foreground"
+                  data-bind="user.pendingCount"
+                >
+                  2
+                </p>
+              </div>
+              <div
+                class="w-12 h-12 bg-yellow-400/10 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-clock text-yellow-400 text-lg"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-yellow-400 text-sm">
+                <i class="fas fa-hourglass-half mr-1"></i>
+                <span>Awaiting review</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-8">
+        <div class="bg-card rounded-lg border border-border p-6">
+          <div class="flex items-center mb-6">
+            <div
+              class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4"
+            >
+              <i class="fas fa-plus-circle text-primary text-xl"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-foreground">
+                Log a New Achievement
+              </h2>
+              <p class="text-muted-foreground text-sm">
+                Fill in the details below to submit your achievement for
+                validation.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Column 1: Core Details -->
+            <div class="lg:col-span-1 space-y-4">
+              <div>
+                <label
+                  class="block text-sm font-medium text-foreground mb-2"
+                  for="ach-title"
+                  >Achievement Title</label
+                >
+                <input
+                  id="ach-title"
+                  type="text"
+                  placeholder="e.g., First Place in CodeFest 2024"
+                  class="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                  data-implementation="Form validation required"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-sm font-medium text-foreground mb-2"
+                  for="ach-category"
+                  >Category</label
+                >
+                <select
+                  id="ach-category"
+                  class="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                >
+                  <option>Select category...</option>
+                  <option>Academic</option>
+                  <option>Technical/Coding</option>
+                  <option>Sports</option>
+                  <option>Arts & Culture</option>
+                  <option>Leadership</option>
+                  <option>Volunteering</option>
+                  <option>Internship</option>
+                  <option>Placement</option>
+                </select>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    class="block text-sm font-medium text-foreground mb-2"
+                    for="ach-date"
+                    >Date</label
+                  >
+                  <input
+                    id="ach-date"
+                    type="date"
+                    class="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="block text-sm font-medium text-foreground mb-2"
+                    for="ach-issuer"
+                    >Issuing Body</label
+                  >
+                  <input
+                    id="ach-issuer"
+                    type="text"
+                    placeholder="e.g., IEEE"
+                    class="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 2: Description -->
+            <div class="lg:col-span-1">
+              <label
+                class="block text-sm font-medium text-foreground mb-2"
+                for="ach-desc"
+                >Description</label
+              >
+              <textarea
+                id="ach-desc"
+                rows="6"
+                placeholder="Provide a brief description of your achievement, your role, and the outcome."
+                class="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Column 3: File Upload -->
+            <div class="lg:col-span-1">
+              <label class="block text-sm font-medium text-foreground mb-2"
+                >Upload Proof</label
+              >
+              <div
+                class="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer bg-black/20"
+                data-implementation="File upload dropzone with drag-and-drop support"
+              >
+                <div class="flex flex-col items-center justify-center h-full">
+                  <i
+                    class="fas fa-cloud-upload-alt text-4xl text-muted-foreground mb-3"
+                  ></i>
+                  <p class="text-foreground font-medium mb-1">
+                    Drop certificate here
+                  </p>
+                  <p class="text-muted-foreground text-sm">
+                    or
+                    <span class="text-primary font-semibold">browse files</span>
+                  </p>
+                  <p class="text-xs text-muted-foreground mt-4">
+                    PDF, JPG, PNG up to 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex justify-end space-x-3">
+            <button
+              class="px-4 py-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors"
+            >
+              Save Draft
+            </button>
+            <button
+              class="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2"
+              data-event="click:handleSubmit"
+            >
+              <i class="fas fa-paper-plane"></i>
+              <span>Submit for Review</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements Section Anchor -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8" id="achievements">
+        <div class="lg:col-span-2">
+          <div class="bg-card rounded-lg border border-border p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-semibold text-foreground">
+                Recent Achievements
+              </h2>
+              <button class="text-primary text-sm font-medium hover:underline">
+                View All
+              </button>
+            </div>
+
+            <div class="space-y-4">
+              <div
+                class="flex items-start space-x-4 p-4 border border-border rounded-lg"
+                data-mock="true"
+              >
+                <div
+                  class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fas fa-code text-secondary"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <h3
+                      class="font-medium text-foreground"
+                      data-bind="achievement.title"
+                    >
+                      Hackathon Winner - TechFest 2024
+                    </h3>
+                    <span
+                      class="bg-secondary/10 text-secondary text-xs px-2 py-1 rounded-full"
+                      >+50 pts</span
+                    >
+                  </div>
+                  <p
+                    class="text-sm text-muted-foreground mb-2"
+                    data-bind="achievement.category"
+                  >
+                    Technical/Coding • March 15, 2024
+                  </p>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1">
+                      <i class="fas fa-thumbs-up text-secondary text-sm"></i>
+                      <span
+                        class="text-sm text-muted-foreground"
+                        data-bind="achievement.likes"
+                        >12</span
+                      >
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <i
+                        class="fas fa-comment text-muted-foreground text-sm"
+                      ></i>
+                      <span
+                        class="text-sm text-muted-foreground"
+                        data-bind="achievement.comments"
+                        >3</span
+                      >
+                    </div>
+                    <span
+                      class="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full"
+                      >Verified</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="flex items-start space-x-4 p-4 border border-border rounded-lg"
+                data-mock="true"
+              >
+                <div
+                  class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fas fa-users text-accent"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <h3 class="font-medium text-foreground">
+                      Club President - Coding Society
+                    </h3>
+                    <span
+                      class="bg-accent/10 text-accent text-xs px-2 py-1 rounded-full"
+                      >+30 pts</span
+                    >
+                  </div>
+                  <p class="text-sm text-muted-foreground mb-2">
+                    Leadership • January 2024
+                  </p>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1">
+                      <i class="fas fa-thumbs-up text-secondary text-sm"></i>
+                      <span class="text-sm text-muted-foreground">8</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <i
+                        class="fas fa-comment text-muted-foreground text-sm"
+                      ></i>
+                      <span class="text-sm text-muted-foreground">1</span>
+                    </div>
+                    <span
+                      class="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full"
+                      >Verified</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="flex items-start space-x-4 p-4 border border-yellow-800 bg-yellow-900/50 rounded-lg"
+                data-mock="true"
+              >
+                <div
+                  class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fas fa-briefcase text-primary"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <h3 class="font-medium text-foreground">
+                      Summer Internship - Google
+                    </h3>
+                    <span
+                      class="bg-yellow-400/20 text-yellow-400 text-xs px-2 py-1 rounded-full"
+                      >Pending</span
+                    >
+                  </div>
+                  <p class="text-sm text-muted-foreground mb-2">
+                    Internship • March 20, 2024
+                  </p>
+                  <p class="text-sm text-yellow-400">
+                    Awaiting faculty verification
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-card rounded-lg border border-border p-6"
+          id="leaderboard"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-foreground">Leaderboard</h2>
+            <select
+              class="text-sm border border-border rounded px-2 py-1 bg-background"
+            >
+              <option>Global</option>
+              <option>Technical</option>
+              <option>Sports</option>
+              <option>Academic</option>
+            </select>
+          </div>
+
+          <div class="space-y-3" data-mock="true">
+            <div
+              class="flex items-center space-x-3 p-3 bg-yellow-900/50 border border-yellow-700 rounded-lg"
+            >
+              <div
+                class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white text-sm font-bold"
+              >
+                1
+              </div>
+              <div class="w-8 h-8 bg-muted rounded-full">
+                <img
+                  src="img/Aditya_Yelmar.jpeg"
+                  alt="Aditya Yelmar"
+                  class="profile-image"
+                />
+              </div>
+              <div class="flex-1">
+                <p
+                  class="font-medium text-foreground text-sm"
+                  data-bind="user.name"
+                >
+                  Aditya Yelmar
+                </p>
+                <p
+                  class="text-xs text-muted-foreground"
+                  data-bind="user.department"
+                >
+                  Computer Science
+                </p>
+              </div>
+              <div class="text-right">
+                <p
+                  class="font-bold text-foreground text-sm"
+                  data-bind="user.points"
+                >
+                  1,245
+                </p>
+                <p class="text-xs text-muted-foreground">points</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center space-x-3 p-3 bg-gray-800 border border-gray-700 rounded-lg"
+            >
+              <div
+                class="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center text-white text-sm font-bold"
+              >
+                2
+              </div>
+              <div class="w-8 h-8 bg-muted rounded-full">
+                <img
+                  src="img/Soham_Yeola.jpeg"
+                  alt="Soham Yeola"
+                  class="profile-image"
+                />
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-foreground text-sm">Soham Yeola</p>
+                <p class="text-xs text-muted-foreground">Electronics</p>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-foreground text-sm">1,156</p>
+                <p class="text-xs text-muted-foreground">points</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center space-x-3 p-3 bg-amber-900/50 border border-amber-700 rounded-lg"
+            >
+              <div
+                class="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-white text-sm font-bold"
+              >
+                3
+              </div>
+              <div class="w-8 h-8 bg-muted rounded-full">
+                <img
+                  src="img/file.jpg"
+                  alt="Sid Waghmare"
+                  class="profile-image"
+                />
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-foreground text-sm">Sid Waghmare</p>
+                <p class="text-xs text-muted-foreground">Mechanical</p>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-foreground text-sm">1,089</p>
+                <p class="text-xs text-muted-foreground">points</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center space-x-3 p-3 hover:bg-gray-800 rounded-lg transition-colors"
+            >
+              <div
+                class="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-sm font-bold"
+              >
+                4
+              </div>
+              <div class="w-8 h-8 bg-muted rounded-full">
+                <img
+                  src="img/Sujal_Singh.jpeg"
+                  alt="Sujal Singh"
+                  class="profile-image"
+                />
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-foreground text-sm">Sujal Singh</p>
+                <p class="text-xs text-muted-foreground">Civil</p>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-foreground text-sm">892</p>
+                <p class="text-xs text-muted-foreground">points</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center space-x-3 p-3 bg-primary/20 border border-primary/40 rounded-lg"
+            >
+              <div
+                class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold"
+              >
+                5
+              </div>
+              <div class="w-8 h-8 bg-primary/20 rounded-full">
+                <img
+                  src="img/Pratham Lokhande.jpeg"
+                  alt="Pratham Lokhande"
+                  class="profile-image"
+                />
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-primary text-sm">
+                  Pratham Lokhande (You)
+                </p>
+                <p class="text-xs text-muted-foreground">Computer Science</p>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-primary text-sm">847</p>
+                <p class="text-xs text-muted-foreground">points</p>
+              </div>
+            </div>
+          </div>
+          <button
+            class="w-full mt-4 text-primary text-sm font-medium hover:underline"
+          >
+            View Full Leaderboard
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="mb-8"
+        id="faculty-panel"
+        data-implementation="Show only for faculty role"
+      >
+        <div class="bg-card rounded-lg border border-border p-6">
+          <h2 class="text-xl font-semibold text-foreground mb-4">
+            Achievement Validation Panel
+          </h2>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-border">
+                  <th
+                    class="text-left py-3 text-sm font-medium text-muted-foreground"
+                  >
+                    Student
+                  </th>
+                  <th
+                    class="text-left py-3 text-sm font-medium text-muted-foreground"
+                  >
+                    Achievement
+                  </th>
+                  <th
+                    class="text-left py-3 text-sm font-medium text-muted-foreground"
+                  >
+                    Category
+                  </th>
+                  <th
+                    class="text-left py-3 text-sm font-medium text-muted-foreground"
+                  >
+                    Date
+                  </th>
+                  <th
+                    class="text-left py-3 text-sm font-medium text-muted-foreground"
+                  >
+                    Proof
+                  </th>
+                  <th
+                    class="text-left py-3 text-sm font-medium text-muted-foreground"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border" data-mock="true">
+                <tr>
+                  <td class="py-4">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-8 h-8 bg-muted rounded-full"></div>
+                      <div>
+                        <p class="font-medium text-sm text-foreground">
+                          Pratham Lokhande
+                        </p>
+                        <p class="text-xs text-muted-foreground">CS2021001</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4">
+                    <p class="font-medium text-sm text-foreground">
+                      Summer Internship - Google
+                    </p>
+                    <p class="text-xs text-muted-foreground">
+                      Software Development
+                    </p>
+                  </td>
+                  <td class="py-4">
+                    <span
+                      class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
+                      >Internship</span
+                    >
+                  </td>
+                  <td class="py-4 text-sm text-muted-foreground">
+                    Mar 20, 2024
+                  </td>
+                  <td class="py-4">
+                    <button class="text-primary text-sm hover:underline">
+                      View Certificate
+                    </button>
+                  </td>
+                  <td class="py-4">
+                    <div class="flex space-x-2">
+                      <button
+                        class="bg-secondary text-secondary-foreground px-3 py-1 rounded text-xs font-medium hover:bg-secondary/90"
+                        data-event="click:handleApprove"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        class="bg-destructive text-destructive-foreground px-3 py-1 rounded text-xs font-medium hover:bg-destructive/90"
+                        data-event="click:handleReject"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-8" id="portfolio">
+        <div
+          class="bg-card rounded-lg border border-border p-6 relative overflow-hidden"
+        >
+          <!-- Background Gradient -->
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900/40 opacity-50"
+          ></div>
+          <!-- Abstract Blob -->
+          <div
+            class="absolute -top-16 -right-16 w-64 h-64 bg-pink-500/20 rounded-full filter blur-3xl"
+          ></div>
+
+          <div class="relative z-10">
+            <div class="flex justify-between items-start mb-6">
+              <div>
+                <h2 class="text-xl font-semibold text-foreground">
+                  Your Live Portfolio
+                </h2>
+                <p class="text-muted-foreground text-sm mt-1">
+                  A real-time, shareable showcase of your achievements.
+                </p>
+              </div>
+              <div class="flex space-x-3 flex-shrink-0">
+                <a
+                  href="portfolio.html"
+                  target="_blank"
+                  class="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/90 transition-colors text-sm"
+                >
+                  <i class="fas fa-eye mr-2"></i>View Live
+                </a>
+                <button
+                  class="px-4 py-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors text-sm"
+                >
+                  <i class="fas fa-link mr-2"></i>Share
+                </button>
+                <button
+                  class="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm"
+                  data-event="click:generatePDF"
+                >
+                  <i class="fas fa-download mr-2"></i>Download PDF
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="border border-border/50 rounded-lg p-6 bg-black/30 backdrop-blur-sm"
+            >
+              <div class="flex items-center space-x-6 mb-6">
+                <div class="flex-shrink-0">
+                  <img
+                    src="img/Pratham Lokhande.jpeg"
+                    alt="Pratham Lokhande"
+                    class="w-24 h-24 rounded-full border-4 border-primary/50 object-cover"
+                  />
+                </div>
+                <div class="flex-1">
+                  <h3
+                    class="text-2xl font-bold text-foreground"
+                    data-bind="user.name"
+                  >
+                    Pratham Lokhande
+                  </h3>
+                  <p
+                    class="text-muted-foreground font-medium mb-2"
+                    data-bind="user.department"
+                  >
+                    Computer Science Student
+                  </p>
+                  <!-- Social Links -->
+                  <div class="flex space-x-4 text-muted-foreground">
+                    <a href="#" class="hover:text-primary transition-colors"
+                      ><i class="fab fa-github fa-lg"></i
+                    ></a>
+                    <a href="#" class="hover:text-primary transition-colors"
+                      ><i class="fab fa-linkedin fa-lg"></i
+                    ></a>
+                    <a href="#" class="hover:text-primary transition-colors"
+                      ><i class="fab fa-twitter fa-lg"></i
+                    ></a>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                  <div class="text-center">
+                    <p
+                      class="text-xl font-bold text-primary"
+                      data-bind="user.totalPoints"
+                    >
+                      847
+                    </p>
+                    <p class="text-xs text-muted-foreground">Total Points</p>
+                  </div>
+                  <div class="text-center">
+                    <p
+                      class="text-xl font-bold text-secondary"
+                      data-bind="user.achievementCount"
+                    >
+                      23
+                    </p>
+                    <p class="text-xs text-muted-foreground">Achievements</p>
+                  </div>
+                  <div class="text-center">
+                    <p
+                      class="text-xl font-bold text-accent"
+                      data-bind="user.rank"
+                    >
+                      #5
+                    </p>
+                    <p class="text-xs text-muted-foreground">Global Rank</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Core Skills -->
+              <div>
+                <h4 class="text-sm font-semibold text-foreground mb-3">
+                  Core Skills
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >Java</span
+                  >
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >Python</span
+                  >
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >Spring Boot</span
+                  >
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >React</span
+                  >
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >AWS</span
+                  >
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >Docker</span
+                  >
+                  <span
+                    class="text-xs font-medium bg-slate-700 text-slate-200 px-3 py-1 rounded-full"
+                    >SQL</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-card rounded-lg border border-border p-6">
+          <h2 class="text-xl font-semibold text-foreground mb-4">
+            Your Badges
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div
+              class="text-center p-4 bg-gray-800 rounded-lg"
+              data-mock="true"
+            >
+              <div
+                class="w-12 h-12 bg-yellow-500 rounded-full mx-auto mb-2 flex items-center justify-center badge-animation"
+              >
+                <i class="fas fa-trophy text-white"></i>
+              </div>
+              <p class="text-sm font-medium text-foreground">Gold Badge</p>
+              <p class="text-xs text-muted-foreground">500+ Points</p>
+            </div>
+            <div
+              class="text-center p-4 bg-gray-800 rounded-lg"
+              data-mock="true"
+            >
+              <div
+                class="w-12 h-12 bg-primary rounded-full mx-auto mb-2 flex items-center justify-center"
+              >
+                <i class="fas fa-code text-white"></i>
+              </div>
+              <p class="text-sm font-medium text-foreground">Tech Hero</p>
+              <p class="text-xs text-muted-foreground">5+ Tech Wins</p>
+            </div>
+            <div
+              class="text-center p-4 bg-gray-800 rounded-lg"
+              data-mock="true"
+            >
+              <div
+                class="w-12 h-12 bg-accent rounded-full mx-auto mb-2 flex items-center justify-center"
+              >
+                <i class="fas fa-users text-white"></i>
+              </div>
+              <p class="text-sm font-medium text-foreground">Leader</p>
+              <p class="text-xs text-muted-foreground">Leadership Role</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card rounded-lg border border-border p-6">
+          <h2 class="text-xl font-semibold text-foreground mb-4">
+            Progress to Diamond
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-foreground"
+                  >Current Progress</span
+                >
+                <span
+                  class="text-sm text-muted-foreground"
+                  data-bind="progress.current"
+                  >847 / 1000 pts</span
+                >
+              </div>
+              <div class="w-full bg-muted rounded-full h-3">
+                <div
+                  class="bg-primary h-3 rounded-full progress-bar"
+                  style="width: 84.7%"
+                ></div>
+              </div>
+              <p class="text-xs text-muted-foreground mt-1">
+                153 points to Diamond Badge
+              </p>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-sm font-medium text-foreground">
+                Suggested Activities:
+              </p>
+              <ul class="space-y-1 text-sm text-muted-foreground">
+                <li class="flex items-center space-x-2">
+                  <i class="fas fa-circle text-xs text-primary"></i>
+                  <span>Win a major hackathon (+50 pts)</span>
+                </li>
+                <li class="flex items-center space-x-2">
+                  <i class="fas fa-circle text-xs text-secondary"></i>
+                  <span>Complete certification course (+30 pts)</span>
+                </li>
+                <li class="flex items-center space-x-2">
+                  <i class="fas fa-circle text-xs text-accent"></i>
+                  <span>Lead a major project (+40 pts)</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="achievement-modal"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden"
+      data-implementation="Modal should be controlled by JavaScript state"
+    >
+      <div
+        class="bg-card rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      >
+        <div class="p-6 border-b border-border">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-foreground">
+              Add New Achievement
+            </h2>
+            <button
+              class="text-muted-foreground hover:text-foreground"
+              data-event="click:closeModal"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <p class="text-muted-foreground text-center py-8">
+            Achievement upload form content...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // TODO: Implement business logic, API calls, and state management
+      (function () {
+        // Modal functionality placeholder
+        function showModal() {
+          document
+            .getElementById("achievement-modal")
+            .classList.remove("hidden");
+        }
+
+        function hideModal() {
+          document.getElementById("achievement-modal").classList.add("hidden");
+        }
+
+        // Add event listeners for demo purposes
+        document.addEventListener("click", function (e) {
+          if (e.target.closest('[data-event="click:closeModal"]')) {
+            hideModal();
+          }
+        });
+
+        // Simulate progress bar animation
+        setTimeout(() => {
+          const progressBar = document.querySelector(".progress-bar");
+          if (progressBar) {
+            progressBar.style.width = "84.7%";
+          }
+        }, 1000);
+      })();
+
+      // Profile dropdown functionality
+      const profileToggle = document.getElementById("profile-menu-toggle");
+      const profileDropdown = document.getElementById("profile-dropdown");
+
+      profileToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!profileToggle.contains(e.target)) {
+          profileDropdown.classList.add("hidden");
+        }
+      });
+
+      // Logout button functionality
+      document
+        .getElementById("logout-btn")
+        .addEventListener("click", function () {
+          window.location.href = "login.html";
+        });
+    </script>
+  </body>
+</html>
